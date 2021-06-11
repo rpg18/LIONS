@@ -115,9 +115,9 @@
 	
 	if [ $deNovo == '1' ]
 	then # De Novo Assembly
-		export ctrlCL2="-library-type fr-firststrand -u -p $THREADS $minFrag $multiFrag $minTrim $trimDrop $mergeR" # I included -library-type fr-firststrand
+		export ctrlCL2="-u -p $THREADS $minFrag $multiFrag $minTrim $trimDrop $mergeR" # Include -library-type fr-firststrand?
 	else # Ab Initio Assembly
-		export ctrlCL2="-library-type fr-firststrand -u -p $THREADS -g $guide" # I included -library-type fr-firststrand
+		export ctrlCL2="-u -p $THREADS -g $guide" # Include -library-type fr-firststrand?
 	fi
 
 # RNAseqPipeline
