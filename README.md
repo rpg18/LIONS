@@ -3,9 +3,9 @@
 
  #### LIONS development version 
  Run LIONS in three steps:
- 	- Prepare input list file (locally)
-	- Run east-lions (qsub job ARRAY)
-	- RUn west-lions (qsub job or locally)
+	Markup : 1. Prepare input list file (locally)
+	2. Run east-lions (qsub job ARRAY)
+	3. RUn west-lions (qsub job or locally)
 	
 #### [LIONS Publication](https://doi.org/10.1093/bioinformatics/btz130) ( [sci-hub link](https://sci-hub.tw/10.1093/bioinformatics/btz130) )
 
