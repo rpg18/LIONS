@@ -41,12 +41,12 @@ then
 	echo ''
 else
 	echo " Import parameter file."
-	echo "    Project Parameters: ./$1" # takes parameter.ctrl, working with array samples
-	export PARAMETER=$1 # see option_lions.sh script
+	echo "    Project Parameters: ./$1"
+	export PARAMETER=$1
 	echo ''
 fi
 	# Run parameter script
-	source $PARAMETER $2 $3 # $2 and $3 ALLOWS TO RUN ARRAY JOB. $2 = $SAMPLE. $3 = PROJECT NAME
+	source $PARAMETER # works in bash only
 
 # Run Initialization Script
 echo ' running initializeLIONS.sh'
@@ -56,8 +56,7 @@ echo ' running initializeLIONS.sh'
 echo ' initialization completed successfully.'
 echo ''
 
-	export INPUT_LIST=$INPUT_LIST # created with prepareINPUT.sh script
-#	export INPUT_LIST="$pDIR/input.list" # <libName> <libPath> <group> csv file
+	export INPUT_LIST="$pDIR/input.list" # <libName> <libPath> <group> csv file
 echo "input list file: $INPUT_LIST"
 
 # EAST LION =========================================================
@@ -100,7 +99,6 @@ do
 				$QSUB $SCRIPTS/eastLion.sh $libName
 
 			else # Local (no) QSUB
-#				export INPUT_LIST="$BASE/controls/input_$libName.list"
 				$SCRIPTS/eastLion.sh $libName
 			fi
 
@@ -115,7 +113,6 @@ do
 				$QSUB $SCRIPTS/eastLion.sh $libName
 
 			else # Local (no) QSUB
-				export INPUT_LIST="$BASE/controls/input_$libName.list" 
 				$SCRIPTS/eastLion.sh $libName
 			fi
 
@@ -166,7 +163,7 @@ do
 done
 
 # Clear summit log
-rm -rf $pDIR/summitLog_$RUNID
+rm $pDIR/summitLog_$RUNID
 
 echo ''
 echo ' All EAST LION scripts have completed. '
@@ -183,8 +180,8 @@ echo ''
 cd $pDIR #./LIONS/projects/<projectName>
 
 # Run West Lions Script
-	echo ' Running: westLion.sh'
-#	bash $SCRIPTS/westLion.sh
+	echo ' run: westLion.sh'
+	bash $SCRIPTS/westLion.sh
 
 echo ''
 echo ' WEST LION scripts have completed. '

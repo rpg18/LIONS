@@ -26,9 +26,8 @@
 	OUTPUT="$libName"
 
 # Output name (no .bam suffix)
-#	outDir="$BASE/projects/$PROJECT/$libName" # directory for final output
-	outDir="$path_out/projects/$PROJECT/$libName"
-	echo "output directory $outDir"
+	outDir="$BASE/projects/$PROJECT/$libName" # directory for final output
+
 # Imported Parameters from <parameter.ctrl>
 	# Tophat 2
 	 #THREADS [-p]
@@ -118,13 +117,13 @@ then
 	echo " $libName.bam is already generated."
 	echo " ... skipping alignment"
 	echo ''
-	rm -rf $INDEX*
+	rm $INDEX*
 	
 	# Check if index is generated
 	if [ ! -s $libName.bam.bai ]
 	then
 		$lBIN/samtools index $OUPUT.bam
-		cp $OUTPUT.bam.bai alignment/$OUTPUT.bam.bai
+		mv $OUTPUT.bam.bai alignment/$OUTPUT.bam.bai
 		ln -s alignment/$OUTPUT.bam.bai $OUTPUT.bam.bai
 	fi	
 
@@ -144,7 +143,7 @@ then
 	$lBIN/samtools index $OUTPUT.bam
 
 	# Clean up index files
-	rm -rf $INDEX*
+	rm $INDEX*
 
 else # Alignment Bypass is False, calculate Alignment
 # Declare the input/output files
@@ -173,7 +172,7 @@ then
 	gzip temp.2.fq
 	
 	# Clean Up from this point
-	rm -rf temp_sort.bam
+	rm temp_sort.bam
 fi
 
 # Run Tophat2 Alignment
@@ -209,8 +208,8 @@ fi
 	echo ''
 
 # -------- Post Alignment Cleanup
-	rm -rf temp* # Clear temporary files
-	rm -rf $INDEX* # Clear bowtie index files
+	rm temp* # Clear temporary files
+	rm $INDEX* # Clear bowtie index files
 	
 	#echo 'Directory after clearup'
 	#ls -lh
@@ -249,9 +248,9 @@ fi # Alignment Bypass Flow Control Ends
 	then
 		echo 'Bam processing succesful'
 		# Cleanup
-		rm -rf accepted_hits.bam
-		rm -rf unmapped.bam
-		rm -rf unsorted.bam
+		rm -f accepted_hits.bam
+		rm -f unmapped.bam
+		rm -f unsorted.bam
 		
 	else
 		echo "Alignment probably didn't work"
@@ -262,7 +261,7 @@ fi # Alignment Bypass Flow Control Ends
 		then
 			# copy files to output
 			cd $BASE
-			cp $WORK $outDir
+			mv $WORK $outDir
 		fi
 		# Else the working directory is the output directory
 
@@ -280,7 +279,7 @@ fi # Alignment Bypass Flow Control Ends
 	mv .tmp alignment
 
 	# Move input/output bam files back to main LIB directory
-	cp alignment/input.bam ./input.bam
+	mv alignment/input.bam ./input.bam
 	ln -s ./alignment/$OUTPUT.bam ./$OUTPUT.bam
 	ln -s ./alignment/$OUTPUT.bam.bai ./$OUTPUT.bam.bai
 
@@ -292,14 +291,8 @@ fi # End all Alignment flow
 # Previously we used RefSeq instead of assembly (and it's still possible)
 # but found the results to be poorer.
 
-########### if assembly file already generated - uncomment three lines below:
-#cp -a $path_out/${PROJECT}-stringtie/$libName/assembly/ $outDir #"$path_out/projects/$PROJECT/$libName"
-#echo "$path_out/${PROJECT}-stringtie/$libName/assembly/ paste to $outDir"
-#cd $outDir #"$path_out/projects/$PROJECT/$libName"
-
 # Assembly Flow control
-if [ -s assembly/transcripts.gtf ] #$BASE/projects/$PROJECT/$libName/assembly/transcripts.gtf
-#if [ -s $BASE/projects/$PROJECT/$libName/assembly/transcripts.gtf ] #$BASE/projects/$PROJECT/$libName/assembly/transcripts.gtf
+if [ -s assembly/transcripts.gtf ]
 then
 # Assembly already ran; skip	
 	echo "  transcripts.gtf Assembly file already generated."
@@ -309,8 +302,8 @@ else
 
 
 # Make an ouput folder for Cufflinks Assembly
-	mkdir -pv assembly
-	
+	mkdir -p assembly
+
 # Declare the input/output files
 	echo "  No assembly detected"
 	echo "     Bam input: $OUTPUT.bam"
@@ -335,7 +328,6 @@ fi
 	echo " ... cufflinks completed."
 
 
-
 fi
 
 # RESOURCE GENERATION -----------------------------------------------
@@ -353,21 +345,21 @@ then
 else
 # Resources have not been generated yet
 	# Initialize Resources folder for library
-	mkdir -pv $outDir/resources
+	mkdir -p resources
 	cd resources
-#	cp $outDir/assembly/transcripts/gtf $outDir/resources #### CHECK IT
+
 	# link transcripts.gtf to resources folder
-#	ln -fs ../assembly/transcripts.gtf transcripts.gtf ############### CHECK THIS ln -fs $outDir/assembly/transcripts.gtf transcripts.gtf
-	ln -fs $outDir/assembly/transcripts.gtf transcripts.gtf
+	ln -fs ../assembly/transcripts.gtf transcripts.gtf
+
 	echo "  Building resources for $libName"
 
 	# Run buildResourceGTF.sh
-	$BASE/scripts/RNAseqPipeline/resourceGeneration/buildResourceGTF.sh transcripts.gtf assembly #$outDir/assembly/transcripts.gtf assembly
+	$BASE/scripts/RNAseqPipeline/resourceGeneration/buildResourceGTF.sh transcripts.gtf assembly
 
-	cd $outDir
+	cd ..
 
 	# From FlagStat File; create a file of 'mappedReads' and put it into resources
-	sed -n 3p ${outDir}/alignment/$libName.flagstat | cut -f1 -d' ' - > ${outDir}/resources/mappedReads
+	sed -n 3p alignment/$libName.flagstat | cut -f1 -d' ' - > resources/mappedReads
 	
 fi # End resource flow control
 
@@ -376,7 +368,7 @@ fi # End resource flow control
 # Creates a wig file ** Edit this for UCSC compatability **
 
 # Expression Flow Control
-if [ -s expression/wig/$libName.$QUALITY.wig.gz ]  #$outDir/expression/wig/$libName.$QUALITY.wig.gz
+if [ -s expression/wig/$libName.$QUALITY.wig.gz ]
 then
 	# RNA seq already ran
 	echo " RNAseq Pipeline already performed"
@@ -387,20 +379,18 @@ else
 
 	# RNAseq Analysis
 	echo " RNAseq Pipeline Analysis"
-	echo "     cmd: RNAseqPipeline.sh $REF $libName R $OUTPUT.bam" #R/S
+	echo "     cmd: RNAseqPipeline.sh $REF $libName R $OUTPUT.bam"
 	
-	bash $SCRIPTS/RNAseqPipeline/RNAseqPipeline.sh $REF $libName R $OUTPUT.bam #R/S ######################## modify for stranded or unstranded library type
+	bash $SCRIPTS/RNAseqPipeline/RNAseqPipeline.sh $REF $libName R $OUTPUT.bam
 
 	echo ""
 
 	# Wig Sanity Check
-	echo $outDir/expression/wig/$libName.$QUALITY.wig.gz ################# add $outDir/
+	echo expression/wig/$libName.$QUALITY.wig.gz
 
-#	if [ -s expression/wig/$libName.$QUALITY.wig.gz ] # was the wig file generated ### CHECKK $outDir/expression/wig/$libName.$QUALITY.wig.gz
-	if [ -s $outDir/expression/wig/$libName.$QUALITY.wig.gz ]
+	if [ -s expression/wig/$libName.$QUALITY.wig.gz ] # was the wig file generated
 	then
 		echo "Wig file generated successfully."
-		echo "$outDir/expression/wig/$libName.$QUALITY.wig.gz" ############################ added
 		# Continue
 	else
 		echo "Wig file not generated. Errors are afoot."
@@ -434,9 +424,9 @@ else
 	echo " Chimeric Reads Analysis"
 	echo "      ChimericReadTool.sh $libName.bam"
 
-#	bash $SCRIPTS/ChimericReadTool/ChimericReadTool.sh $OUTPUT.bam $pDIR/$libName/expression/wig/$libName.$QUALITY.wig.gz $REF ################ THE ERROR IS HERE
-	bash $SCRIPTS/ChimericReadTool/ChimericReadTool.sh $OUTPUT.bam expression/wig/$libName.$QUALITY.wig.gz $REF
+	#bash $SCRIPTS/ChimericReadTool/ChimericReadTool.sh $OUTPUT.bam $pDIR/$libName/expression/wig/$libName.$QUALITY.wig.gz $REF
 
+	bash $SCRIPTS/ChimericReadTool/ChimericReadTool.sh $OUTPUT.bam expression/wig/$libName.$QUALITY.wig.gz $REF
 	# Output is <libName>.lcsv raw file
 	# Total TE-Transcript interaction table
 
@@ -522,11 +512,10 @@ fi # End chimera read tool flow
 		if [ $SYSTEM == 'gsc' ]
 		then
 			# discard input bam file (which was copied to tmp)
-			rm -rf $WORK/$INPUT
+			rm $WORK/$INPUT
 			# copy files to output
 			cd $BASE
 			mv $WORK/* $outDir
-#			cp $WORK/* $outDir ## CHECK IT
 		fi
 
 # End LIONS pipeline
@@ -593,7 +582,7 @@ else # LIONS file already exists
 		else	
 			# Chimeric Filtering using thresholds
 			echo "  Run ChimSort"
-			echo "     $lBIN/Rscript $SCRIPTS/ChimericReadTool/chimSort.R $libName.pc.lcsv $libName.$RUNID.lion $mappedReads $CRT"
+			echo "     Rscript chimSort.R $libName.pc.lcsv $libName.$RUNID.lion $mappedReads $CRT"
 	
 			$lBIN/Rscript $SCRIPTS/ChimericReadTool/chimSort.R $libName.pc.lcsv $libName.$RUNID.lion $mappedReads $CRT
 
