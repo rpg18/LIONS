@@ -9,11 +9,11 @@
 
 	export SCRIPTS="$BASE/scripts"
 
-	export TMP=$TMPDIR # Temporary working directory [Cluster-only]
+	export TMP="/tmp/artmp" # Temporary working directory [Cluster-only]
 
 	export RESOURCES="$BASE/resources/$INDEX"
 
-	export pDIR="$path_out/projects/$PROJECT"
+	export pDIR="$BASE/projects/$PROJECT"
 	
 	export lBIN="$BASE/bin"
 
@@ -23,7 +23,7 @@
 	# <gsc> = run with qsub commands on the gsc genesis cluster
 	# <local> = run on local machine.
 
-	export THREADS='16' # number of CPU cores to use
+	export THREADS='1' # number of CPU cores to use
 
 # Cluster Specific Commands
 	if [ $SYSTEM == 'gsc' ]

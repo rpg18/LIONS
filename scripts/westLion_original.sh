@@ -13,18 +13,13 @@
 
 echo "     ... westLion.sh running"
 echo "     Project: $PROJECT"
-echo "     Output Directory: $path_out"
+echo "     Output Directory: $pDIR"
 echo ''
 
-source $3 $PROJECT # parameters.sh
 # ===================================================================
 # CORE SCRIPT========================================================
 # ===================================================================
-#INPUT_FILE=$2
-pDIR=$1 #$path_out/projects/$PROJECT
 cd $pDIR #./LIONS/projects/<projectName>
-#RESOURCES=$3/resources/hg38
-#SCRIPTS=$3/scripts
 
 # Master Flow Control
 ## **** To be implemented *****

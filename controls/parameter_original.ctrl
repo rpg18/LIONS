@@ -6,22 +6,18 @@
 # Adjust these parameters to run for a particular project
 
 # The LIONS home folder
-#	export BASE=$PWD # Base folder for ~/LIONS/
-	export BASE=$path
-#	echo $path_out
-#	echo $BASE
+	export BASE=$PWD # Base folder for ~/LIONS/
 
 # PROJECT -------------------------------------------------
-#	export PROJECT='MESO' # Project Name
+	export PROJECT='sandbox' # Project Name
 
-	export INPUT_LIST="$BASE/controls/input_${1}.list" # <libName> <libPath> <group> csv file
-#	export INPUT_LIST=$INPUT_LIST
+	export INPUT_LIST="$BASE/controls/input.list" # <libName> <libPath> <group> csv file
 	# <libPath> is one of
 	#     A) Paired end bam file. '/home/libPath.bam'
 	#     B) Sorted paired fastQ files. Comma seperated.
 	#        '/home/lib.fq1,/home/lib.fq2'
 
-	export CALLSETTINGS='driverTE' ######################### EDIT
+	export CALLSETTINGS='oncoexaptation'
 	# Pre-set TE-initiation classification settings
         # - 'oncoexapatation'  : Detect high abundance TE isoforms
         # - 'transcriptomeANN' : Artifical Neural Network based classifier
@@ -32,15 +28,15 @@
 
 # RESOURCES ----------------------------------------------
 
-	export INDEX='hg38' # Genome resource set to use
+	export INDEX='hg19' # Genome resource set to use
 	#  Should be a ~/LIONS/resources/<INDEX>/ folder
 	#  See README file 'RESOURCE INITIALIZATION' to set up
 	#  the folder prior to running LIONS the first time
 
-	export GENESET='refseq_hg38.ucsc' # Reference Gene Set. UCSC format
+	export GENESET='refSeq_hg19.ucsc' # Reference Gene Set. UCSC format
 	# in ~/LIONS/resources/<INDEX>/annotation/<GENESET>	
 
-	export REPEATMASKER='rm_hg38.ucsc' # RepeatMasker. UCSC format
+	export REPEATMASKER='rm_hg19.ucsc' # RepeatMasker. UCSC format
 	# in ~/LIONS/resources/<INDEX>/repeat/<REPEATMASKER>
 
 # SYSTEM --------------------------------------------------
@@ -115,9 +111,9 @@
 	
 	if [ $deNovo == '1' ]
 	then # De Novo Assembly
-		export ctrlCL2="-library-type fr-firststrand -u -p $THREADS $minFrag $multiFrag $minTrim $trimDrop $mergeR" # I included -library-type fr-firststrand
+		export ctrlCL2="-u -p $THREADS $minFrag $multiFrag $minTrim $trimDrop $mergeR"
 	else # Ab Initio Assembly
-		export ctrlCL2="-library-type fr-firststrand -u -p $THREADS -g $guide" # I included -library-type fr-firststrand
+		export ctrlCL2="-u -p $THREADS -g $guide"
 	fi
 
 # RNAseqPipeline
@@ -225,11 +221,11 @@ fi
 
 	# Recurrent Cutoff
 	# Must be present in at least this many Group 2 libraries
-	export cgGroupRecurrence='1' ############## EDIT
+	export cgGroupRecurrence='1'
 
 	# Specificity Cutoff
 	# Must be absent in at least this many Group 1 libraires
-	export cgSpecificity='4' ############## EDIT
+	export cgSpecificity='1'
 
 	# chimGroup command string
 	export CG=$(echo $cgGroupRecurrence $cgSpecificity)
