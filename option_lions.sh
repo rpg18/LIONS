@@ -1,5 +1,8 @@
 #!/bin/bash
-#
+# Script for running LIONS in three steps
+# 1- Create input_PROJECT.list - locally
+# 2- Run EAST-LIONS as qsub ARRAY job
+# 3- RUN WEST-LIONS - qsub job (no ARRAY) or locally
 echo 'starts LIONS...'
 
 # PREPARE ARGUMENTS
@@ -24,7 +27,6 @@ fi
 
 while getopts ${optstring} arg; do
   case "${arg}" in
-#    l) bash $path/prepareINPUT.sh $PROJECT $PATH_META $PATH_BAM $CONTROL $TREAT $BAM_SUFFIX $COLUMN
     l) bash $path_script/prepareINPUT.sh $PROJECT $PATH_META $PATH_BAM $path $CONTROL $COLUMN
 	echo "Preparing input list using prepareINPUT.sh" ;;
 	#
