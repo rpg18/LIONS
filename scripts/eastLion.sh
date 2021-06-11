@@ -389,18 +389,18 @@ else
 	echo " RNAseq Pipeline Analysis"
 	echo "     cmd: RNAseqPipeline.sh $REF $libName R $OUTPUT.bam" #R/S
 	
-	bash $SCRIPTS/RNAseqPipeline/RNAseqPipeline.sh $REF $libName R $OUTPUT.bam #R/S ######################## modify for stranded or unstranded library type
+	bash $SCRIPTS/RNAseqPipeline/RNAseqPipeline.sh $REF $libName R $OUTPUT.bam #R/S ################ modify for stranded or unstranded library type
 
 	echo ""
 
 	# Wig Sanity Check
-	echo $outDir/expression/wig/$libName.$QUALITY.wig.gz ################# add $outDir/
+	echo $outDir/expression/wig/$libName.$QUALITY.wig.gz ################ add $outDir/
 
 #	if [ -s expression/wig/$libName.$QUALITY.wig.gz ] # was the wig file generated ### CHECKK $outDir/expression/wig/$libName.$QUALITY.wig.gz
 	if [ -s $outDir/expression/wig/$libName.$QUALITY.wig.gz ]
 	then
 		echo "Wig file generated successfully."
-		echo "$outDir/expression/wig/$libName.$QUALITY.wig.gz" ############################ added
+		echo "$outDir/expression/wig/$libName.$QUALITY.wig.gz" ################ added
 		# Continue
 	else
 		echo "Wig file not generated. Errors are afoot."
