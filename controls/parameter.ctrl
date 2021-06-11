@@ -12,8 +12,6 @@
 #	echo $BASE
 
 # PROJECT -------------------------------------------------
-#	export PROJECT='MESO' # Project Name
-
 	export INPUT_LIST="$BASE/controls/input_${1}.list" # <libName> <libPath> <group> csv file
 #	export INPUT_LIST=$INPUT_LIST
 	# <libPath> is one of
